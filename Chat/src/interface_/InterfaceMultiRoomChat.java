@@ -239,8 +239,8 @@ public class InterfaceMultiRoomChat extends JFrame {
 					.addGap(90))
 		);
 		rooms.setLayout(gl_rooms);
-		createNewChatTab(tabbedPane, "Pito++");
-		createNewChatTab(tabbedPane, "Pitote12++");
+		createNewChatTab(tabbedPane, "Cosas++");
+		createNewChatTab(tabbedPane, "Cosas2++");
 		
 		
 	}
