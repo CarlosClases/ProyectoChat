@@ -15,6 +15,7 @@ public class ConnectionThread extends Thread {
 	private ArrayList<PrintStream> clientBuffersOut = new ArrayList<PrintStream>();
 	private ArrayList<ReaderThread> clientThread = new ArrayList<ReaderThread>();
 	private ArrayList<ClientLogic> clientList = new ArrayList<ClientLogic>();
+	//El Socket que guarda la conexion de un cliente
 	private Socket client;
 
 	private boolean kill = false;
@@ -98,26 +99,44 @@ public class ConnectionThread extends Thread {
 				client = server.getServerSocket().accept();
 				this.clientSockets.add(client);
 				int indexControl = clientSockets.indexOf(client);
+				
+				//Crea un nuevo buffer de entrada
 				BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				this.clientBuffersIn.add(input);
+				
+				//Crea un nuevo buffer de salida
 				PrintStream output = new PrintStream(client.getOutputStream());
 				this.clientBuffersOut.add(output);
+				
+				//Espera la informacion inicial (input.readLine();)
 				String name = input.readLine();
+				
+				//Se añade nuevo objeto cliente
 				this.getClientList().add(new ClientLogic(name, client));
+				
+				//Crear un nuevo thread de lectura
 				ReaderThread reader = new ReaderThread(input, this, clientBuffersOut, client, indexControl);
 				this.clientThread.add(reader);
+				
+				//Inicia el buffer de lectura del cliente
 				reader.start();
+				
+				//Aseguradura de que los datos funcionan correctamente
 				this.setClientBuffersIn(clientBuffersIn);
 				this.setClientBuffersOut(clientBuffersOut);
 				this.setClientSockets(clientSockets);
 				this.setClientThread(clientThread);
 				// this.getClientThread().get(indexControl).start();
-
+				
+				//Cantidad de clientes conectados
 				System.out.println(clientSockets.size() + " Clients connected");
+				
+				//Añade los datos al servidor
 				server.setClientSockets(clientSockets);
 				server.setClientBuffersIn(clientBuffersIn);
 				server.setClientBuffersOut(clientBuffersOut);
 				server.setClientThread(clientThread);
+				server.setClientList(clientList);
 
 			}
 		} catch (IOException e) {

@@ -24,9 +24,9 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
 
-public class InterfaceChat extends JFrame {
-	
-	private String ID_Room = "1";
+public class InterfaceChat2 extends JFrame {
+
+	private String ID_Room = "2";
 	private JPanel contentPane;
 	private JTextField mensaje;
 	private JTextPane TextChat = new JTextPane();
@@ -41,7 +41,7 @@ public class InterfaceChat extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					InterfaceChat frame = new InterfaceChat(null);
+					InterfaceChat2 frame = new InterfaceChat2(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,13 +53,17 @@ public class InterfaceChat extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InterfaceChat(ClientLogic cli) {
+	public InterfaceChat2(ClientLogic cli) {
 		cli.addRoom(ID_Room);
 		// To read from the server
 		try {
 			input = new BufferedReader(new InputStreamReader(cli.getSocket().getInputStream()));
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		try {
 			output = new PrintStream(cli.getSocket().getOutputStream());
-			//Informacion inicial
 			output.println(cli.getName());
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
@@ -67,7 +71,7 @@ public class InterfaceChat extends JFrame {
 		}
 		// reader= new ReaderThread(input, output);
 		// reader.start();
-		writer = new WriterThread(input, TextChat);
+		writer = new WriterThread(input, output, TextChat);
 		writer.start();
 		///
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

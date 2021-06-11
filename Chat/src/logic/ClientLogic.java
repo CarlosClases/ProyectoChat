@@ -25,9 +25,16 @@ public class ClientLogic {
     public ArrayList<String> getRooms() {
 		return rooms;
 	}
-
 	public void setRooms(ArrayList<String> rooms) {
 		this.rooms = rooms;
+	}
+	public void addRoom(String room) {
+		this.rooms.add(room);
+	}
+	public void deleteRoom(String room) {
+		int index = this.rooms.indexOf(room.toString());
+		this.rooms.remove(index);
+		System.out.println(index + "// index to delete");
 	}
 
 	public static boolean isConnection() {
@@ -36,6 +43,7 @@ public class ClientLogic {
 
 	public ClientLogic(String name, int port, String server) {
     	setName(name);
+    	/*
     	try {
 			socket = new Socket(server,port);
 		} catch (UnknownHostException e) {
@@ -45,6 +53,7 @@ public class ClientLogic {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
     }
 	public ClientLogic(String name, Socket cli) {
     	this.setName(name);

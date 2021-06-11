@@ -24,15 +24,20 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import logic.*;
+
 public class InterfaceMultiRoomChat extends JFrame {
 
 	private JPanel contentPane;
 	//private JTextField messagePlace;
 	//private JTextField textField;
 	//private JTextField textField_1;
-	private ArrayList<JPanel> roomsArrayList= new ArrayList <JPanel>();
+	private static ArrayList<JPanel> roomsArrayList= new ArrayList <JPanel>();
 	//private JTextField textField_2;
-	private logic.ClientLogic client;
+	private static ClientLogic client= new ClientLogic("Paco", 1, "localhost");
+	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	private ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane);
+	
 	ActionListener listen;
 	public InterfaceMultiRoomChat(logic.ClientLogic client) {
 		this.setClient(client);
@@ -58,9 +63,11 @@ public class InterfaceMultiRoomChat extends JFrame {
 			}
 		});
 	}
-	public void createNewChatTab(JTabbedPane placeToInsertTab, String nameOfTheTab) {
+	public static void createNewChatTab(JTabbedPane placeToInsertTab, String nameOfTheTab) {
+		//String ID_Room = nameOfTheTab;
 		JPanel newTab = new JPanel();
 		newTab.setToolTipText("");
+		//Añade el JPanel al layout de pestañas
 		placeToInsertTab.addTab(nameOfTheTab, null, newTab, null);
 		
 		JTextPane chatTextPlace = new JTextPane();
@@ -77,46 +84,70 @@ public class InterfaceMultiRoomChat extends JFrame {
 		messagePlace.setText("AAAAAAAAAAAAAA");
 		
 		JButton sendButton = new JButton("Send");
+		
+		JButton btn_Morirse = new JButton("moridura");
+		btn_Morirse.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				client.deleteRoom(nameOfTheTab);
+				for(String name : client.getRooms()) {
+					System.out.println(name + "// delete time");
+				}
+				placeToInsertTab.remove(newTab);
+			}
+		});
+		
+		JLabel nameLabel = new JLabel(client.getName());
+		nameLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		GroupLayout gl_rooms = new GroupLayout(newTab);
+		gl_rooms.setHorizontalGroup(
+			gl_rooms.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_rooms.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_rooms.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_rooms.createSequentialGroup()
+							.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
+								.addComponent(messagePlace, GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
+								.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE))
+							.addGap(18)
+							.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
+								.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+								.addComponent(sendButton, GroupLayout.PREFERRED_SIZE, 111, GroupLayout.PREFERRED_SIZE)))
+						.addGroup(gl_rooms.createSequentialGroup()
+							.addComponent(nameLabel, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 587, Short.MAX_VALUE)
+							.addComponent(btn_Morirse)))
+					.addContainerGap())
+		);
+		gl_rooms.setVerticalGroup(
+			gl_rooms.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_rooms.createSequentialGroup()
+					.addGroup(gl_rooms.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btn_Morirse)
+						.addComponent(nameLabel))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
+						.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+						.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_rooms.createParallelGroup(Alignment.BASELINE)
+						.addComponent(messagePlace, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+						.addComponent(sendButton))
+					.addGap(12))
+		);
 		createLayout(gl_rooms, messagePlace, chatTextPlace, sendButton, clientConnected);
 		newTab.setLayout(gl_rooms);
 		roomsArrayList.add(newTab);
 		int index = roomsArrayList.indexOf(newTab);
-		JTextPane AAAAA = (JTextPane) newTab.getComponent(3);
+		JTextPane AAAAA = (JTextPane) newTab.getComponent(1);
 		System.out.println(AAAAA.getText());
-		////0= message place
-		////1=Chat 
-		////2=Send Button
-		////3=Connected users
+		////0= Message place
+		////1= Chat 
+		////2=  Send Button
+		////3= Connected users
+		////4= Morirse button 
 	}
-	private void createLayout(GroupLayout gl_rooms , JTextField messagePlace, JTextPane chatTextPlace,
+	private static void createLayout(GroupLayout gl_rooms , JTextField messagePlace, JTextPane chatTextPlace,
 			JButton sendButton, JTextPane clientConnected) {
-		gl_rooms.setHorizontalGroup(
-				gl_rooms.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_rooms.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
-							.addComponent(messagePlace, GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
-							.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE))
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addGroup(gl_rooms.createParallelGroup(Alignment.TRAILING, false)
-							.addComponent(sendButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
-						.addGap(1))
-			);
-			gl_rooms.setVerticalGroup(
-				gl_rooms.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_rooms.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
-							.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
-							.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE))
-						.addGap(19)
-						.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
-							.addComponent(messagePlace, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-							.addComponent(sendButton))
-						.addContainerGap())
-			);
 	}
 
 	/**
@@ -132,7 +163,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 		contentPane.setLayout(new CardLayout(0, 0));
 		
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		
 		contentPane.add(tabbedPane, "name_3873949461500");
 
 		
@@ -141,40 +172,46 @@ public class InterfaceMultiRoomChat extends JFrame {
 		tabbedPane.addTab("Room Select", null, rooms, null);
 		
 		JButton btn_Sport = new JButton("");
-		btn_Sport.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				createNewChatTab(tabbedPane, "Deportes");
-			}
-		});
+		btn_Sport.setToolTipText("Sport");
+		btn_Sport.addActionListener(roomButtonListener);
 		btn_Sport.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_Sport.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/Deportes.png")));
 		btn_Sport.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		JButton btn_Anime = new JButton("");
+		btn_Anime.setToolTipText("Anime");
+		btn_Anime.addActionListener(roomButtonListener);
 		btn_Anime.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_Anime.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/Animes.png")));
 		btn_Anime.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		JButton btn_Juegos = new JButton("");
+		btn_Juegos.setToolTipText("Games");
+		btn_Juegos.addActionListener(roomButtonListener);
 		btn_Juegos.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_Juegos.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/Juegos.png")));
-		btn_Juegos.setVerticalAlignment(SwingConstants.BOTTOM);
 		btn_Juegos.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		JButton btn_Series = new JButton("");
+		btn_Series.setToolTipText("Series");
+		btn_Series.addActionListener(roomButtonListener);
 		btn_Series.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_Series.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/Series.png")));
 		btn_Series.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		JButton btn_Computing = new JButton("");
+		btn_Computing.setToolTipText("Computing");
+		btn_Computing.addActionListener(roomButtonListener);
 		btn_Computing.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btn_Computing.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/Informatica.png")));
 		btn_Computing.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
-		JButton btn_Wepon = new JButton("");
-		btn_Wepon.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btn_Wepon.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/revolver.png")));
-		btn_Wepon.setFont(new Font("Tahoma", Font.BOLD, 16));
+		JButton btn_Weapon = new JButton("");
+		btn_Weapon.setToolTipText("Weapons");
+		btn_Weapon.addActionListener(roomButtonListener);
+		btn_Weapon.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btn_Weapon.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/revolver.png")));
+		btn_Weapon.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		JLabel lbl_Title = new JLabel("CHOSE A ROOM");
 		lbl_Title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -204,7 +241,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 							.addGap(30)
 							.addComponent(btn_Computing, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
 							.addGap(30)
-							.addComponent(btn_Wepon, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+							.addComponent(btn_Weapon, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
 						.addGroup(gl_rooms.createSequentialGroup()
 							.addGap(241)
 							.addComponent(Line1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -235,13 +272,10 @@ public class InterfaceMultiRoomChat extends JFrame {
 					.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
 						.addComponent(btn_Series, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
 						.addComponent(btn_Computing, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btn_Wepon, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
+						.addComponent(btn_Weapon, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
 					.addGap(90))
 		);
 		rooms.setLayout(gl_rooms);
-		createNewChatTab(tabbedPane, "Cosas++");
-		createNewChatTab(tabbedPane, "Cosas2++");
-		
-		
+		createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa");
 	}
 }

@@ -17,11 +17,17 @@ public class ServerLogic {
 
 	/* We keep the port in a constant */
 	private final static int PORT = 3501;
+	//Socket del servidor que esperara conexiones
 	private static ServerSocket serverSocket;
+	//Lista de conexiones activas de clientes
 	private ArrayList<Socket> clientSockets = new ArrayList<Socket>();
+	//Lista de buffered de entrada
 	private ArrayList<BufferedReader> clientBuffersIn = new ArrayList<BufferedReader>();
+	//Lista de buffered de salida para cada cliente
 	private ArrayList<PrintStream> clientBuffersOut = new ArrayList<PrintStream>();
+	//Lista de lectores para cada cliente
 	private ArrayList<ReaderThread> clientThread = new ArrayList<ReaderThread>();
+	//Lista de cliente(Objetos)
 	private ArrayList<ClientLogic> clientList = new ArrayList<ClientLogic>();
 ////////Getter & Setters
 	public ArrayList<ClientLogic> getClientList() {
@@ -78,7 +84,7 @@ public class ServerLogic {
 	public static void main(String[] args) {
 
 		try {
-			// Server Socket to wait for network requests
+			//El servidor se conecta y espera conexiones
 			ServerLogic server = new ServerLogic(new ServerSocket(PORT));
 			System.out.println("Server started");
 			ConnectionThread conn = new ConnectionThread(server);

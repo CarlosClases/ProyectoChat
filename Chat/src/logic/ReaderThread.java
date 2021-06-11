@@ -11,6 +11,7 @@ import javax.swing.JTextPane;
 
 public class ReaderThread extends Thread {
 	private BufferedReader bufferInput;
+	//Todas las salidas de todos los clientes
 	private ArrayList<PrintStream> clientBuffersOut = new ArrayList<PrintStream>();
 	private Socket cli;
 	private boolean kill = true;
@@ -34,12 +35,16 @@ public class ReaderThread extends Thread {
 		while (kill) {
 			try {
 				String message;
+				//Leer la informacion inicial bufferInput.readLine();
 				message = bufferInput.readLine();
 				index = conn.getClientSockets().indexOf(cli);
 				
 				System.out.println(message + " ///// Before if");
+				
+				//Codigo necesario para poder cerrar la conexion
 				int closeNumber = cli.getPort() + cli.getLocalPort();
 				String compare = closeNumber + "AAA";
+				//Comprueba si me llega un codigo de cerrado de conexion o un mensaje normal
 				if (message.equals(compare)) {
 					kill();
 					conn.getClientBuffersIn().remove(index);
@@ -53,7 +58,9 @@ public class ReaderThread extends Thread {
 
 				} else {
 					System.out.println("boi");
+					//Pilla el nombre del cliente
 					String name = conn.getClientList().get(index).getName();
+					//Escupe el mensaje a todos los clientes
 					for (int i = 0; i < clientBuffersOut.size(); i++) {
 						clientBuffersOut.get(i).println(name+":"+message);
 						clientBuffersOut.get(i).flush();
@@ -61,12 +68,6 @@ public class ReaderThread extends Thread {
 				}
 
 				System.out.println(message + " /////Client message " + index);
-				// Scanner tec = new Scanner(System.in);
-				// message= tec.nextLine();
-				// output.println(message);
-				// output.flush();
-				// output.flush();
-				// output.println(message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

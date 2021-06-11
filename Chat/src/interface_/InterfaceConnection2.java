@@ -12,10 +12,9 @@ import javax.swing.JTextField;
 
 import logic.*;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
-public class InterfaceConnection extends JFrame {
+public class InterfaceConnection2 extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textFieldIpDirecction;
@@ -29,7 +28,7 @@ public class InterfaceConnection extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					InterfaceConnection frame = new InterfaceConnection();
+					InterfaceConnection2 frame = new InterfaceConnection2();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -41,7 +40,7 @@ public class InterfaceConnection extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InterfaceConnection() {
+	public InterfaceConnection2() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 565, 375);
 		contentPane = new JPanel();
@@ -88,9 +87,7 @@ public class InterfaceConnection extends JFrame {
 				int port = Integer.parseInt(textFieldPortNumber.getText());
 				System.out.println(port);
 				ClientLogic cli = new ClientLogic(textFieldUsername.getText(), port, textFieldIpDirecction.getText());
-				ArrayList<String> rooms = new ArrayList<String>();
-				cli.setRooms(rooms);
-				InterfaceChat fc = new InterfaceChat(cli);
+				InterfaceChat2 fc = new InterfaceChat2(cli);
 				fc.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				fc.setVisible(true);
 				dispose();

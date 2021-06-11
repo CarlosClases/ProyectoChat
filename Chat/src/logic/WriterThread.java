@@ -8,11 +8,9 @@ import javax.swing.JTextPane;
 
 public class WriterThread extends Thread{
 	BufferedReader bufferinput;
-	PrintStream clientBufferOut;
 	JTextPane show;
-	public WriterThread(BufferedReader buffer, PrintStream output, JTextPane show){
+	public WriterThread(BufferedReader buffer, JTextPane show){
 		this.bufferinput = buffer;
-		this.clientBufferOut = output;
 		this.show=show;
 	}
 	@Override
@@ -21,8 +19,10 @@ public class WriterThread extends Thread{
 			try {
 				String message;
 				//clientBufferOut.println(message);
+				//lee una linea de entrada del servidor
 				message=bufferinput.readLine();
 				System.out.println(message + "/////From the server");
+				//Imprime el mensaje mas el cotenido que ya habia
 				show.setText(show.getText()+"\n"+ message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
