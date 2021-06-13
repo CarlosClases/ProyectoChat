@@ -8,6 +8,10 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
@@ -29,20 +33,21 @@ import logic.*;
 public class InterfaceMultiRoomChat extends JFrame {
 
 	private JPanel contentPane;
-	//private JTextField messagePlace;
-	//private JTextField textField;
-	//private JTextField textField_1;
+	
+	private static BufferedReader input;
+	private static PrintStream output;
+	
+	private static WriterThread writer;
+	private static ArrayList<WriterThread> writeArray = new ArrayList<WriterThread>();
+	
 	private static ArrayList<JPanel> roomsArrayList= new ArrayList <JPanel>();
-	//private JTextField textField_2;
-	private static ClientLogic client= new ClientLogic("Paco", 1, "localhost");
+	private static ClientLogic client = new ClientLogic();
+	
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 	private ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane);
 	
 	ActionListener listen;
-	public InterfaceMultiRoomChat(logic.ClientLogic client) {
-		this.setClient(client);
-	}
-	public logic.ClientLogic getClient() {
+	public ClientLogic getClient() {
 		return this.client;
 	}
 	public void setClient(logic.ClientLogic client) {
@@ -55,7 +60,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					InterfaceMultiRoomChat frame = new InterfaceMultiRoomChat();
+					InterfaceMultiRoomChat frame = new InterfaceMultiRoomChat(client);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -73,7 +78,8 @@ public class InterfaceMultiRoomChat extends JFrame {
 		JTextPane chatTextPlace = new JTextPane();
 		chatTextPlace.setEditable(false);
 		chatTextPlace.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		chatTextPlace.setText("Pito");
+		chatTextPlace.setToolTipText(nameOfTheTab);
+		//chatTextPlace.setText("Pito");
 		
 		JTextPane clientConnected = new JTextPane();
 		clientConnected.setEditable(false);
@@ -81,9 +87,21 @@ public class InterfaceMultiRoomChat extends JFrame {
 		clientConnected.setText("BBBBBBBBBB");
 		JTextField messagePlace = new JTextField();
 		messagePlace.setColumns(10);
-		messagePlace.setText("AAAAAAAAAAAAAA");
+		messagePlace.setText("");
 		
 		JButton sendButton = new JButton("Send");
+		sendButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String idRoom = nameOfTheTab;
+				output.println(idRoom);
+				String line = "";
+				System.out.println("Client mensaje: ");
+				line = messagePlace.getText();
+				System.out.println(line + " ////To the server");
+				output.println(line);
+				messagePlace.setText("");
+			}
+		});
 		
 		JButton btn_Morirse = new JButton("moridura");
 		btn_Morirse.addActionListener(new ActionListener() {
@@ -106,11 +124,14 @@ public class InterfaceMultiRoomChat extends JFrame {
 					.addGroup(gl_rooms.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_rooms.createSequentialGroup()
 							.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
-								.addComponent(messagePlace, GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
-								.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE))
-							.addGap(18)
+								.addGroup(gl_rooms.createSequentialGroup()
+									.addComponent(messagePlace, GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
+									.addGap(18))
+								.addGroup(gl_rooms.createSequentialGroup()
+									.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED)))
 							.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
-								.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+								.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
 								.addComponent(sendButton, GroupLayout.PREFERRED_SIZE, 111, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_rooms.createSequentialGroup()
 							.addComponent(nameLabel, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
@@ -124,10 +145,10 @@ public class InterfaceMultiRoomChat extends JFrame {
 					.addGroup(gl_rooms.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btn_Morirse)
 						.addComponent(nameLabel))
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
-						.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
-						.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
+						.addComponent(clientConnected, GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+						.addComponent(chatTextPlace, GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_rooms.createParallelGroup(Alignment.BASELINE)
 						.addComponent(messagePlace, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
@@ -139,7 +160,10 @@ public class InterfaceMultiRoomChat extends JFrame {
 		roomsArrayList.add(newTab);
 		int index = roomsArrayList.indexOf(newTab);
 		JTextPane AAAAA = (JTextPane) newTab.getComponent(1);
-		System.out.println(AAAAA.getText());
+		//System.out.println(AAAAA.getText());
+		writer = new WriterThread(input, chatTextPlace);
+		writer.start();
+		writeArray.add(writer);
 		////0= Message place
 		////1= Chat 
 		////2=  Send Button
@@ -153,7 +177,19 @@ public class InterfaceMultiRoomChat extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InterfaceMultiRoomChat() {
+	public InterfaceMultiRoomChat(ClientLogic client) {
+		this.client = client;
+		
+		try {
+			input = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
+			output = new PrintStream(client.getSocket().getOutputStream());
+			//Informacion inicial
+			output.println(client.getName());
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		setTitle("Chateito Wapo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 811, 457);
@@ -217,12 +253,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 		lbl_Title.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_Title.setForeground(new Color(102, 205, 170));
 		lbl_Title.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
-		
-		Canvas Line1 = new Canvas();
-		Line1.setBackground(new Color(102, 205, 170));
-		
-		Canvas Line2 = new Canvas();
-		Line2.setBackground(new Color(102, 205, 170));
 		GroupLayout gl_rooms = new GroupLayout(rooms);
 		gl_rooms.setHorizontalGroup(
 			gl_rooms.createParallelGroup(Alignment.LEADING)
@@ -243,12 +273,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 							.addGap(30)
 							.addComponent(btn_Weapon, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
 						.addGroup(gl_rooms.createSequentialGroup()
-							.addGap(241)
-							.addComponent(Line1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_rooms.createSequentialGroup()
-							.addGap(201)
-							.addComponent(Line2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_rooms.createSequentialGroup()
 							.addGap(248)
 							.addComponent(lbl_Title, GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
 							.addGap(85)))
@@ -258,12 +282,8 @@ public class InterfaceMultiRoomChat extends JFrame {
 			gl_rooms.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_rooms.createSequentialGroup()
 					.addGap(39)
-					.addGroup(gl_rooms.createParallelGroup(Alignment.TRAILING)
-						.addComponent(Line1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lbl_Title, GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
-					.addGap(16)
-					.addComponent(Line2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(25)
+					.addComponent(lbl_Title, GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+					.addGap(41)
 					.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
 						.addComponent(btn_Sport, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE)
 						.addComponent(btn_Anime, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE)
@@ -276,6 +296,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 					.addGap(90))
 		);
 		rooms.setLayout(gl_rooms);
-		createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa");
+		//createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa");
 	}
 }

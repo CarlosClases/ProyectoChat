@@ -40,10 +40,9 @@ public class ClientLogic {
 	public static boolean isConnection() {
 		return connection;
 	}
-
+	public ClientLogic() {}
 	public ClientLogic(String name, int port, String server) {
     	setName(name);
-    	/*
     	try {
 			socket = new Socket(server,port);
 		} catch (UnknownHostException e) {
@@ -53,7 +52,6 @@ public class ClientLogic {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
     }
 	public ClientLogic(String name, Socket cli) {
     	this.setName(name);
