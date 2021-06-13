@@ -16,7 +16,7 @@ import java.util.Scanner;
 public class ServerLogic {
 
 	/* We keep the port in a constant */
-	private final static int PORT = 3501;
+	private final static int PORT = 3503;
 	//Socket del servidor que esperara conexiones
 	private static ServerSocket serverSocket;
 	//Lista de conexiones activas de clientes

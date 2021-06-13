@@ -23,7 +23,7 @@ public ListenersRoomButton (ClientLogic client, JTabbedPane tabPlace) {
 			
 			if(!client.getRooms().contains(id_sala)) {
 				client.addRoom(id_sala);
-				InterfaceMultiRoomChat.createNewChatTab(tabPlace, id_sala);
+				InterfaceMultiRoomChat.createNewChatTab(tabPlace, id_sala, client);
 			}
 			for(String name : client.getRooms()) {
 				System.out.println(name);

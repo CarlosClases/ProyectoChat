@@ -29,6 +29,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import logic.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class InterfaceMultiRoomChat extends JFrame {
 
@@ -41,18 +43,17 @@ public class InterfaceMultiRoomChat extends JFrame {
 	private static ArrayList<WriterThread> writeArray = new ArrayList<WriterThread>();
 	
 	private static ArrayList<JPanel> roomsArrayList= new ArrayList <JPanel>();
-	private static ClientLogic client = new ClientLogic();
+	//private static ClientLogic client = new ClientLogic();
 	
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-	private ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane);
 	
-	ActionListener listen;
-	public ClientLogic getClient() {
+	private ActionListener listen;
+	/*public ClientLogic getClient() {
 		return this.client;
-	}
-	public void setClient(logic.ClientLogic client) {
+	}*/
+	/*public void setClient(logic.ClientLogic client) {
 		this.client=client;
-	};
+	};*/
 	/**
 	 * Launch the application.
 	 */
@@ -60,7 +61,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					InterfaceMultiRoomChat frame = new InterfaceMultiRoomChat(client);
+					InterfaceMultiRoomChat frame = new InterfaceMultiRoomChat(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -68,23 +69,24 @@ public class InterfaceMultiRoomChat extends JFrame {
 			}
 		});
 	}
-	public static void createNewChatTab(JTabbedPane placeToInsertTab, String nameOfTheTab) {
+	public static void createNewChatTab(JTabbedPane placeToInsertTab, String nameOfTheTab , ClientLogic client) {
 		//String ID_Room = nameOfTheTab;
 		JPanel newTab = new JPanel();
 		newTab.setToolTipText("");
+		newTab.setName(nameOfTheTab);
 		//Añade el JPanel al layout de pestañas
 		placeToInsertTab.addTab(nameOfTheTab, null, newTab, null);
 		
 		JTextPane chatTextPlace = new JTextPane();
 		chatTextPlace.setEditable(false);
 		chatTextPlace.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		chatTextPlace.setToolTipText(nameOfTheTab);
-		//chatTextPlace.setText("Pito");
+		chatTextPlace.setName("ChatPlace");
 		
 		JTextPane clientConnected = new JTextPane();
 		clientConnected.setEditable(false);
 		clientConnected.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		clientConnected.setText("BBBBBBBBBB");
+		clientConnected.setName("ClientsConnected");
 		JTextField messagePlace = new JTextField();
 		messagePlace.setColumns(10);
 		messagePlace.setText("");
@@ -161,9 +163,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 		int index = roomsArrayList.indexOf(newTab);
 		JTextPane AAAAA = (JTextPane) newTab.getComponent(1);
 		//System.out.println(AAAAA.getText());
-		writer = new WriterThread(input, chatTextPlace);
-		writer.start();
-		writeArray.add(writer);
+		
 		////0= Message place
 		////1= Chat 
 		////2=  Send Button
@@ -178,7 +178,28 @@ public class InterfaceMultiRoomChat extends JFrame {
 	 * Create the frame.
 	 */
 	public InterfaceMultiRoomChat(ClientLogic client) {
-		this.client = client;
+		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane);
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				try {
+					int closeNumber = client.getSocket().getPort() + client.getSocket().getLocalPort();
+					//output.println(client.getName() + " disconnected");
+					output.println(closeNumber + "AAA");
+					for (WriterThread writerProcess : writeArray) {
+						writerProcess.suicide();
+						writeArray.remove(writerProcess);
+					}
+					client.getSocket().close();
+					System.exit(0);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+
 		
 		try {
 			input = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
@@ -189,7 +210,8 @@ public class InterfaceMultiRoomChat extends JFrame {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		
+		writer = new WriterThread(input, roomsArrayList);
+		writer.start();
 		setTitle("Chateito Wapo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 811, 457);

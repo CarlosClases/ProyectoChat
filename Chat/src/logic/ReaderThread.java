@@ -34,18 +34,20 @@ public class ReaderThread extends Thread {
 	public void run() {
 		while (kill) {
 			try {
+				String protocol;
+				protocol = bufferInput.readLine();
+				System.out.println(protocol +"///// Protocol");
 				String message;
-				//Leer la informacion inicial bufferInput.readLine();
 				message = bufferInput.readLine();
 				index = conn.getClientSockets().indexOf(cli);
 				
-				System.out.println(message + " ///// Before if");
+				//System.out.println(message + " ///// Before if");
 				
 				//Codigo necesario para poder cerrar la conexion
 				int closeNumber = cli.getPort() + cli.getLocalPort();
 				String compare = closeNumber + "AAA";
 				//Comprueba si me llega un codigo de cerrado de conexion o un mensaje normal
-				if (message.equals(compare)) {
+				if (protocol.equals(compare)) {
 					kill();
 					conn.getClientBuffersIn().remove(index);
 					conn.getClientBuffersOut().remove(index);
@@ -57,17 +59,25 @@ public class ReaderThread extends Thread {
 					
 
 				} else {
-					System.out.println("boi");
-					//Pilla el nombre del cliente
-					String name = conn.getClientList().get(index).getName();
-					//Escupe el mensaje a todos los clientes
+					//Leer la informacion inicial bufferInput.readLine();
+					
 					for (int i = 0; i < clientBuffersOut.size(); i++) {
+						System.out.println(protocol +"///// Protocol to the client");
+						//Pilla el nombre del cliente
+						String name = conn.getClientList().get(index).getName();
+						//Escupe el mensaje a todos los clientes
+						clientBuffersOut.get(i).println(protocol);
+						clientBuffersOut.get(i).flush();
+						System.out.println(message +"///// Message to the client");
 						clientBuffersOut.get(i).println(name+":"+message);
 						clientBuffersOut.get(i).flush();
 					}
+					
+					System.out.println("boi");
+				
 				}
 
-				System.out.println(message + " /////Client message " + index);
+				//System.out.println(message + " /////Client message " + index);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
