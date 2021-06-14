@@ -81,11 +81,6 @@ public class InterfaceRegister extends JFrame {
 		lbl_Register.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_Register.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
 		
-		JLabel lblInfoName = new JLabel("");
-		lblInfoName.setForeground(new Color(0, 0, 0));
-		lblInfoName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 12));
-		lblInfoName.setHorizontalAlignment(SwingConstants.CENTER);
-		
 		JLabel lbl_Username = new JLabel("Username:");
 		lbl_Username.setForeground(Color.BLACK);
 		lbl_Username.setFont(new Font("Tahoma", Font.BOLD, 20));
@@ -94,6 +89,10 @@ public class InterfaceRegister extends JFrame {
 		textField_Username.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		textField_Username.setColumns(10);
 		
+		JLabel lblInfoName = new JLabel("");
+		lblInfoName.setForeground(new Color(0, 0, 0));
+		lblInfoName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 12));
+		lblInfoName.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		JLabel lbl_Password = new JLabel("Password:");
 		lbl_Password.setForeground(Color.BLACK);
@@ -102,6 +101,10 @@ public class InterfaceRegister extends JFrame {
 		textField_Password = new JTextField();
 		textField_Password.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		textField_Password.setColumns(10);
+		
+		JLabel lblInfoPassword = new JLabel("");
+		lblInfoPassword.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoPassword.setFont(new Font("Tahoma", Font.ITALIC, 12));
 		
 		JLabel lbl_Email = new JLabel("Email:");
 		lbl_Email.setForeground(Color.BLACK);
@@ -161,6 +164,12 @@ public class InterfaceRegister extends JFrame {
 				SecurityDatabase.noRepiteName(textField_Username, lblInfoName, btn_Login, connect);
 			}
 		});
+		textField_Password.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				SecurityDatabase.goodPassword(textField_Password, lblInfoPassword, btn_Login);
+			}
+		});
 		textField_EmaiL.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -170,24 +179,12 @@ public class InterfaceRegister extends JFrame {
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(5)
 					.addComponent(lbl_Username, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
 					.addGap(25)
 					.addComponent(textField_Username, GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-					.addGap(5))
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(5)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lbl_Email, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-							.addGap(25)
-							.addComponent(textField_EmaiL, GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lbl_Password, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-							.addGap(25)
-							.addComponent(textField_Password, GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)))
 					.addGap(5))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(104)
@@ -201,10 +198,28 @@ public class InterfaceRegister extends JFrame {
 					.addGap(34)
 					.addComponent(lblInfoName, GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
 					.addGap(37))
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap(37, Short.MAX_VALUE)
 					.addComponent(lblInfoEmail, GroupLayout.PREFERRED_SIZE, 283, GroupLayout.PREFERRED_SIZE)
 					.addGap(34))
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addGap(5)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(10)
+							.addComponent(lblInfoPassword, GroupLayout.PREFERRED_SIZE, 283, GroupLayout.PREFERRED_SIZE)
+							.addContainerGap())
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lbl_Email, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+									.addGap(25)
+									.addComponent(textField_EmaiL, GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lbl_Password, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+									.addGap(25)
+									.addComponent(textField_Password, GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)))
+							.addGap(5))))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -220,7 +235,9 @@ public class InterfaceRegister extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addComponent(lbl_Password, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(textField_Password, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
-					.addGap(40)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(lblInfoPassword, GroupLayout.PREFERRED_SIZE, 16, GroupLayout.PREFERRED_SIZE)
+					.addGap(13)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(lbl_Email, GroupLayout.PREFERRED_SIZE, 20, Short.MAX_VALUE)
 						.addComponent(textField_EmaiL, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))

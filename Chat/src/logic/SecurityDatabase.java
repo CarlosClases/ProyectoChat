@@ -31,25 +31,24 @@ public class SecurityDatabase {
 		}
 	}
 
-	public static boolean noRepiteName(JTextField textField_Username, JLabel lblInfo, JButton btn_Login,
+	public static void noRepiteName(JTextField textField_Username, JLabel lblInfo, JButton btn_Login,
 			Connection connect) {
 		boolean repite = false;
 		try {
-			// Statements allow to issue SQL queries to the database
+
 			Statement statement = connect.createStatement();
-			// Result set get the result of the SQL query
+
 			ResultSet rs = statement.executeQuery("select * from client");
-			// writeResultSet(resultSet);
-			String Nuevo_nombre = textField_Username.getText();
-			String Aviso_texto;
-			int Numero_Letras_Nombre = Nuevo_nombre.length();
-			if (Numero_Letras_Nombre < 5) { // Comprueba si el nuevo nombre cumple el minimo de caracteres
-				Aviso_texto = "Introduzca al menos 5 caracteres";
-				lblInfo.setText(Aviso_texto);
+
+			String newName = textField_Username.getText();
+			String textInfo;
+			int numLetters = newName.length();
+			if (numLetters < 5) {
+				textInfo = "Enter at least 5 letters";
+				lblInfo.setText(textInfo);
 				lblInfo.setForeground(new Color(165, 42, 42));
 				btn_Login.setEnabled(false);
 			} else {
-				String newName = textField_Username.getText();
 				while (rs.next()) {
 					if (rs.getString(2).equals(newName)) {
 						repite = true;
@@ -57,14 +56,14 @@ public class SecurityDatabase {
 				}
 				if (repite) {
 					lblInfo.setFont(new Font("Times New Roman", Font.BOLD, 12));
-					Aviso_texto = "Nombre no disponible, intruduzca uno nuevo";
-					lblInfo.setText(Aviso_texto);
+					textInfo = "Name not available, enter a new one";
+					lblInfo.setText(textInfo);
 					lblInfo.setForeground(new Color(165, 42, 42));
 					btn_Login.setEnabled(false);
 
 				} else {
-					Aviso_texto = "Nombre disponible";
-					lblInfo.setText(Aviso_texto);
+					textInfo = "Name available";
+					lblInfo.setText(textInfo);
 					lblInfo.setForeground(new Color(0, 128, 0));
 					btn_Login.setEnabled(true);
 				}
@@ -73,23 +72,74 @@ public class SecurityDatabase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return repite;
 	}
-	public static boolean EmailCorrect(JTextField textField_EmaiL, JLabel lblInfo, JButton btn_Login) {
+
+	public static void goodPassword(JTextField textField_Password, JLabel lblInfo, JButton btn_Login) {
+		String newPassword = textField_Password.getText();
+		int numLetters = newPassword.length();
+		if (numLetters < 6) {
+			lblInfo.setText("Enter at least 6 letters");
+			lblInfo.setForeground(new Color(165, 42, 42));
+			btn_Login.setEnabled(false);
+		} else {
+			char clave;
+			//int contNun = 0, contCapLet = 0, contLowLet = 0;
+			boolean cerrojo1 = false, cerrojo2 = false, cerrojo3 = false, end = false;
+			for (int i = 0; !end && i < numLetters; i++) {
+				clave = newPassword.charAt(i);
+				String passValue = String.valueOf(clave);
+				if (passValue.matches("[A-Z]")) {
+					// System.out.println("1");
+					cerrojo1 = true;
+				} else if (passValue.matches("[a-z]")) {
+					// System.out.println("2");
+					cerrojo2 = true;
+				} else if (passValue.matches("[0-9]")) {
+					// System.out.println("3");
+					cerrojo3 = true;
+				}
+				if (cerrojo1 && cerrojo2 && cerrojo3) {
+					System.out.println("Ce mamo");
+					end = true;
+				}
+			}
+			if (!cerrojo1) {
+				lblInfo.setText("Please enter at least one capital letter");
+				lblInfo.setForeground(new Color(165, 42, 42));
+				btn_Login.setEnabled(false);
+				System.out.println("1");
+			}
+			else if (!cerrojo2) {
+				lblInfo.setText("Please enter at least one lowercase letter");
+				lblInfo.setForeground(new Color(165, 42, 42));
+				btn_Login.setEnabled(false);
+			}
+
+			else if (!cerrojo3) {
+				lblInfo.setText("Please enter at least one number");
+				lblInfo.setForeground(new Color(165, 42, 42));
+				btn_Login.setEnabled(false);
+			} 
+			
+			else {
+				lblInfo.setText("Good password bro");
+				lblInfo.setForeground(new Color(0, 128, 0));
+				btn_Login.setEnabled(true);
+			}
+		}
+	}
+	
+	public static void EmailCorrect(JTextField textField_EmaiL, JLabel lblInfo, JButton btn_Login) {
 		String newEmail = textField_EmaiL.getText();
-		boolean goodEmail = true;
 		if (!newEmail.contains("@") || !newEmail.contains(".")) { // Comprueba si el nuevo nombre cumple el minimo de caracteres
 			lblInfo.setText("Introduzca un correo real");
 			lblInfo.setForeground(new Color(165, 42, 42));
 			btn_Login.setEnabled(false);
-			goodEmail = false;
 		}
 		else {
 			lblInfo.setText("Email Correcto");
 			lblInfo.setForeground(new Color(0, 128, 0));
 			btn_Login.setEnabled(true);
-			goodEmail = true;
 		}
-		return goodEmail;
 	}
 }
