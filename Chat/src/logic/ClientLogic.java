@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.Scanner;
 /** ClientExample class, to create a simple example to connect two computer via a 
  * TCPIP connection
  *  */
-public class ClientLogic {
+public class ClientLogic implements Serializable{
     /*Port 5002*/
 	private Socket socket;
 	

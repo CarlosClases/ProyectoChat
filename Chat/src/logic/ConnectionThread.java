@@ -3,6 +3,7 @@ package logic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -15,8 +16,9 @@ public class ConnectionThread extends Thread {
 	private ArrayList<PrintStream> clientBuffersOut = new ArrayList<PrintStream>();
 	private ArrayList<ReaderThread> clientThread = new ArrayList<ReaderThread>();
 	private ArrayList<ClientLogic> clientList = new ArrayList<ClientLogic>();
+	//private ObjectInputStream objectInput;
 	//El Socket que guarda la conexion de un cliente
-	private Socket client;
+	private Socket clientSocket;
 
 	private boolean kill = false;
 
@@ -96,26 +98,32 @@ public class ConnectionThread extends Thread {
 			// ConnectionThread conn= new ConnectionThread();
 			while (!kill) {
 
-				client = server.getServerSocket().accept();
-				this.clientSockets.add(client);
-				int indexControl = clientSockets.indexOf(client);
-				
+				clientSocket = server.getServerSocket().accept();
+				this.clientSockets.add(clientSocket);
+				int indexControl = clientSockets.indexOf(clientSocket);
+				/*this.objectInput = new ObjectInputStream(clientSocket.getInputStream());
+				try {
+					this.clientList.add((ClientLogic) objectInput.readObject());
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
 				//Crea un nuevo buffer de entrada
-				BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				this.clientBuffersIn.add(input);
 				
 				//Crea un nuevo buffer de salida
-				PrintStream output = new PrintStream(client.getOutputStream());
+				PrintStream output = new PrintStream(clientSocket.getOutputStream());
 				this.clientBuffersOut.add(output);
 				
 				//Espera la informacion inicial (input.readLine();)
 				String name = input.readLine();
 				
 				//Se añade nuevo objeto cliente
-				this.getClientList().add(new ClientLogic(name, client));
+				this.getClientList().add(new ClientLogic(name, clientSocket));
 				
 				//Crear un nuevo thread de lectura
-				ReaderThread reader = new ReaderThread(input, this, clientBuffersOut, client, indexControl);
+				ReaderThread reader = new ReaderThread(input, this, clientBuffersOut, clientSocket);
 				this.clientThread.add(reader);
 				
 				//Inicia el buffer de lectura del cliente

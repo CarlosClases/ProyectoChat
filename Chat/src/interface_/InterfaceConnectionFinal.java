@@ -18,6 +18,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
@@ -26,8 +28,9 @@ public class InterfaceConnectionFinal extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldUsername;
 	private JTextField textFieldPassword;
-	private final int port = 3501;
+	private final int port = 3503;
 	private final String ipAddress = "127.0.0.1";
+	private ObjectOutputStream outObjeto;
 	/**
 	 * Launch the application.
 	 */
@@ -120,6 +123,19 @@ public class InterfaceConnectionFinal extends JFrame {
 				ClientLogic cli = new ClientLogic(textFieldUsername.getText(), port, ipAddress);
 				ArrayList<String> rooms = new ArrayList<String>();
 				cli.setRooms(rooms);
+				/*try {
+					outObjeto = new ObjectOutputStream( cli.getSocket().getOutputStream());
+					outObjeto.writeObject(cli);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+					try {
+						outObjeto.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}*/
 				InterfaceMultiRoomChat fc = new InterfaceMultiRoomChat(cli);
 				fc.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				fc.setVisible(true);

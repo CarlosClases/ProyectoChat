@@ -178,7 +178,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 	 * Create the frame.
 	 */
 	public InterfaceMultiRoomChat(ClientLogic client) {
-		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane);
+		
 		
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -199,7 +199,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 				}
 			}
 		});
-
+		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane, output);
 		
 		try {
 			input = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
@@ -210,7 +210,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		writer = new WriterThread(input, roomsArrayList);
+		writer = new WriterThread(input, roomsArrayList, client);
 		writer.start();
 		setTitle("Chateito Wapo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

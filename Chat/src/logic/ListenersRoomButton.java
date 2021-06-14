@@ -1,6 +1,7 @@
 package logic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintStream;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -11,9 +12,11 @@ import interface_.InterfaceMultiRoomChat;
 public class ListenersRoomButton implements ActionListener{
 	private ClientLogic client;
 	private JTabbedPane tabPlace;
-public ListenersRoomButton (ClientLogic client, JTabbedPane tabPlace) {
+	private PrintStream output;
+public ListenersRoomButton (ClientLogic client, JTabbedPane tabPlace, PrintStream output) {
 	this.client = client;
 	this.tabPlace = tabPlace;
+	this.output= output;
 }
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -24,6 +27,10 @@ public ListenersRoomButton (ClientLogic client, JTabbedPane tabPlace) {
 			if(!client.getRooms().contains(id_sala)) {
 				client.addRoom(id_sala);
 				InterfaceMultiRoomChat.createNewChatTab(tabPlace, id_sala, client);
+				this.output.println(id_sala);
+				this.output.flush();
+				this.output.println(client.getName() + " //Connected");
+				this.output.flush();
 			}
 			for(String name : client.getRooms()) {
 				System.out.println(name);
