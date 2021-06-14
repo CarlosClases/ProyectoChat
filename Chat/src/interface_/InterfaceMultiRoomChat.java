@@ -31,6 +31,8 @@ import javax.swing.border.EmptyBorder;
 import logic.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class InterfaceMultiRoomChat extends JFrame {
 
@@ -88,6 +90,21 @@ public class InterfaceMultiRoomChat extends JFrame {
 		clientConnected.setText("BBBBBBBBBB");
 		clientConnected.setName("ClientsConnected");
 		JTextField messagePlace = new JTextField();
+		messagePlace.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER){
+				String idRoom = nameOfTheTab;
+				output.println(idRoom);
+				String line = "";
+				System.out.println("Client mensaje: ");
+				line = messagePlace.getText();
+				System.out.println(line + " ////To the server");
+				output.println(line);
+				messagePlace.setText("");
+				}
+			}
+		});
 		messagePlace.setColumns(10);
 		messagePlace.setText("");
 		
@@ -210,7 +227,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		writer = new WriterThread(input, roomsArrayList, client);
+		writer = new WriterThread(input, roomsArrayList);
 		writer.start();
 		setTitle("Chateito Wapo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -312,12 +329,12 @@ public class InterfaceMultiRoomChat extends JFrame {
 						.addComponent(btn_Juegos, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
 					.addGap(30)
 					.addGroup(gl_rooms.createParallelGroup(Alignment.LEADING)
-						.addComponent(btn_Series, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btn_Computing, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btn_Series, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE)
+						.addComponent(btn_Computing, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE)
 						.addComponent(btn_Weapon, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
 					.addGap(90))
 		);
 		rooms.setLayout(gl_rooms);
-		//createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa");
+		createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa", client);
 	}
 }
