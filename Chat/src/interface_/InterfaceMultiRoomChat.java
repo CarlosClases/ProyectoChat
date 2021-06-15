@@ -12,6 +12,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
@@ -71,7 +74,15 @@ public class InterfaceMultiRoomChat extends JFrame {
 			}
 		});
 	}
-	public static void createNewChatTab(JTabbedPane placeToInsertTab, String nameOfTheTab , ClientLogic client) {
+	public static void createNewChatTab(JTabbedPane placeToInsertTab, String nameOfTheTab , ClientLogic client) throws ClassNotFoundException, SQLException {
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		// Setup the connection with the DB
+		String url = "jdbc:mysql://localhost:3306/chat";
+		String user = "Register";
+		String password = "Register";
+		Connection connect = DriverManager.getConnection(url, user, password);
+		
 		//String ID_Room = nameOfTheTab;
 		JPanel newTab = new JPanel();
 		newTab.setToolTipText("");
@@ -193,8 +204,10 @@ public class InterfaceMultiRoomChat extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
 	 */
-	public InterfaceMultiRoomChat(ClientLogic client) {
+	public InterfaceMultiRoomChat(ClientLogic client) throws ClassNotFoundException, SQLException {
 		
 		
 		addWindowListener(new WindowAdapter() {
@@ -216,7 +229,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 				}
 			}
 		});
-		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane, output);
 		
 		try {
 			input = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
@@ -227,6 +239,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
+		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane, output);
 		writer = new WriterThread(input, roomsArrayList);
 		writer.start();
 		setTitle("Chateito Wapo");
@@ -336,5 +349,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 		);
 		rooms.setLayout(gl_rooms);
 		createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa", client);
+		System.out.println(client.getName());
 	}
 }

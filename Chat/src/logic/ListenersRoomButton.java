@@ -2,6 +2,7 @@ package logic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintStream;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -26,7 +27,13 @@ public ListenersRoomButton (ClientLogic client, JTabbedPane tabPlace, PrintStrea
 			
 			if(!client.getRooms().contains(id_sala)) {
 				client.addRoom(id_sala);
-				InterfaceMultiRoomChat.createNewChatTab(tabPlace, id_sala, client);
+				try {
+					InterfaceMultiRoomChat.createNewChatTab(tabPlace, id_sala, client);
+					
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				this.output.println(id_sala);
 				this.output.flush();
 				this.output.println(client.getName() + " //Connected");
