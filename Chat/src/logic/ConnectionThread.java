@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 public class ConnectionThread extends Thread {
@@ -16,16 +17,24 @@ public class ConnectionThread extends Thread {
 	private ArrayList<PrintStream> clientBuffersOut = new ArrayList<PrintStream>();
 	private ArrayList<ReaderThread> clientThread = new ArrayList<ReaderThread>();
 	private ArrayList<ClientLogic> clientList = new ArrayList<ClientLogic>();
+	private Connection sqlConnection;
 	//private ObjectInputStream objectInput;
 	//El Socket que guarda la conexion de un cliente
 	private Socket clientSocket;
 
 	private boolean kill = false;
 
-	public ConnectionThread() {
-
+	public ConnectionThread(ServerLogic server, Connection sqlConnection) {
+		this.setServer(server);
+		this.setSqlConnection(sqlConnection);
 	}
-///Getters & Setters
+public Connection getSqlConnection() {
+		return sqlConnection;
+	}
+	public void setSqlConnection(Connection sqlConnection) {
+		this.sqlConnection = sqlConnection;
+	}
+	///Getters & Setters
 	public boolean getKill() {
 		return kill;
 	}
@@ -95,19 +104,12 @@ public class ConnectionThread extends Thread {
 
 	public void run() {
 		try {
-			// ConnectionThread conn= new ConnectionThread();
+
 			while (!kill) {
 
 				clientSocket = server.getServerSocket().accept();
 				this.clientSockets.add(clientSocket);
-				int indexControl = clientSockets.indexOf(clientSocket);
-				/*this.objectInput = new ObjectInputStream(clientSocket.getInputStream());
-				try {
-					this.clientList.add((ClientLogic) objectInput.readObject());
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
+				int indexControl = clientSockets.indexOf(clientSocket);				
 				//Crea un nuevo buffer de entrada
 				BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				this.clientBuffersIn.add(input);

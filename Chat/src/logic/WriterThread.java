@@ -3,19 +3,22 @@ package logic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
 public class WriterThread extends Thread{
-	BufferedReader bufferinput;
-	ArrayList<JPanel> panels;
-	JTextPane show;
+	private BufferedReader bufferinput;
+	private ArrayList<JPanel> panels;
+	private JTextPane show;
 	private boolean kill= false; 
-	public WriterThread(BufferedReader buffer, ArrayList<JPanel>  panels){
+	private Connection sqlConnection;
+	public WriterThread(BufferedReader buffer, ArrayList<JPanel>  panels, Connection sqlConnection){
 		this.bufferinput = buffer;
 		this.panels=panels;
+		this.sqlConnection=sqlConnection;
 	}
 	public void suicide() {
 		kill= true;
@@ -50,15 +53,6 @@ public class WriterThread extends Thread{
 					}
 					
 					}		
-				//System.out.println(protocol +" //Protocol From the server " +show.getName() +" //Local protocol");
-				/*if(protocol.equalsIgnoreCase(show.getName())) {
-				//clientBufferOut.println(message);
-				//lee una linea de entrada del servidor
-				
-				System.out.println(message + "/////From the server");
-				//Imprime el mensaje mas el cotenido que ya habia
-				show.setText(show.getText()+"\n"+ message);
-				}*/
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

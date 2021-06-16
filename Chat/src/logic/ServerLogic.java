@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -29,9 +31,18 @@ public class ServerLogic {
 	private ArrayList<ReaderThread> clientThread = new ArrayList<ReaderThread>();
 	//Lista de cliente(Objetos)
 	private ArrayList<ClientLogic> clientList = new ArrayList<ClientLogic>();
+	private static Connection sqlConnection;
 ////////Getter & Setters
 	public ArrayList<ClientLogic> getClientList() {
 		return clientList;
+	}
+
+	public Connection getSqlConnection() {
+		return sqlConnection;
+	}
+
+	public void setSqlConnection(Connection sqlConnection) {
+		this.sqlConnection = sqlConnection;
 	}
 
 	public void setClientList(ArrayList<ClientLogic> clientList) {
@@ -87,6 +98,16 @@ public class ServerLogic {
 			//El servidor se conecta y espera conexiones
 			ServerLogic server = new ServerLogic(new ServerSocket(PORT));
 			System.out.println("Server started");
+			try {
+				sqlConnection = SecurityDatabase.connectionDB();
+				System.out.println("Sql Connection sucessfull!");
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ConnectionThread conn = new ConnectionThread(server);
 			conn.start();
 

@@ -51,6 +51,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 	//private static ClientLogic client = new ClientLogic();
 	
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	private Connection sqlConnection;
 	
 	private ActionListener listen;
 	/*public ClientLogic getClient() {
@@ -76,7 +77,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 	}
 	public static void createNewChatTab(JTabbedPane placeToInsertTab, String nameOfTheTab , ClientLogic client) throws ClassNotFoundException, SQLException {
 		
-		Connection connect = SecurityDatabase.connectionDB();
 		
 		//String ID_Room = nameOfTheTab;
 		JPanel newTab = new JPanel();
@@ -235,8 +235,9 @@ public class InterfaceMultiRoomChat extends JFrame {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane, output);
-		writer = new WriterThread(input, roomsArrayList);
+		sqlConnection = SecurityDatabase.connectionDB();
+		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane, output, sqlConnection);
+		writer = new WriterThread(input, roomsArrayList,sqlConnection);
 		writer.start();
 		setTitle("Chateito Wapo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -252,6 +253,7 @@ public class InterfaceMultiRoomChat extends JFrame {
 
 		
 //////////////////////////////////////////////////Room selection Interface boi///////////////////////////////////
+		
 		JPanel rooms = new JPanel();
 		tabbedPane.addTab("Room Select", null, rooms, null);
 		
