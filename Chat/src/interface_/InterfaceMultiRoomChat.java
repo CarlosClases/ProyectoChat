@@ -133,7 +133,8 @@ public class InterfaceMultiRoomChat extends JFrame {
 			}
 		});
 		
-		JButton btn_Morirse = new JButton("moridura");
+		JButton btn_Morirse = new JButton("");
+		btn_Morirse.setIcon(new ImageIcon(InterfaceMultiRoomChat.class.getResource("/Iconos/Moridura.png")));
 		btn_Morirse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				client.deleteRoom(nameOfTheTab);
