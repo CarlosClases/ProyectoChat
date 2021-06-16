@@ -41,7 +41,7 @@ public class InterfaceRegister extends JFrame {
 	//private JTextField textField_Email;
 	private JTextField textField_EmaiL;
 	private boolean correctName=false, goodPassword=false, emailCorrect=false;
-	private final int port = 3502;
+	private final int port = 3501;
 	private final String ipAddress = "127.0.0.1";
 	//private FocusAdapter focusListener = new FocusAdapter() {
 		
@@ -72,12 +72,7 @@ public class InterfaceRegister extends JFrame {
 	 */
 	public InterfaceRegister() throws ClassNotFoundException, SQLException {
 		
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		// Setup the connection with the DB
-		String url = "jdbc:mysql://localhost:3306/chat";
-		String user = "Register";
-		String password = "Register";
-		Connection connect = DriverManager.getConnection(url, user, password);
+		Connection connect = SecurityDatabase.connectionDB();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 380, 345);

@@ -32,7 +32,7 @@ public class InterfaceConnectionFinal extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldUsername;
 	private JTextField textFieldPassword;
-	private final int port = 3503;
+	private final int port = 3501;
 	private final String ipAddress = "127.0.0.1";
 	boolean niceConnection = false;
 	/**
@@ -58,12 +58,7 @@ public class InterfaceConnectionFinal extends JFrame {
 	 */
 	public InterfaceConnectionFinal() throws ClassNotFoundException, SQLException {
 		
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		// Setup the connection with the DB
-		String url = "jdbc:mysql://localhost:3306/chat";
-		String user = "Register";
-		String password = "Register";
-		Connection connect = DriverManager.getConnection(url, user, password);
+		Connection connect = SecurityDatabase.connectionDB();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 340, 310);
@@ -83,7 +78,6 @@ public class InterfaceConnectionFinal extends JFrame {
 		textFieldUsername = new JTextField();
 		textFieldUsername.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		textFieldUsername.setColumns(10);
-		textFieldUsername.setText("Paco");
 		
 		textFieldPassword = new JTextField();
 		textFieldPassword.setFont(new Font("Tahoma", Font.PLAIN, 15));
