@@ -32,7 +32,7 @@ public class InterfaceConnectionFinal extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldUsername;
 	private JTextField textFieldPassword;
-	private final int port = 3501;
+	private final int port = 3503;
 	private final String ipAddress = "127.0.0.1";
 	boolean niceConnection = false;
 	/**

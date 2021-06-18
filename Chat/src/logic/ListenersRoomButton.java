@@ -34,13 +34,20 @@ public ListenersRoomButton (ClientLogic client, JTabbedPane tabPlace, PrintStrea
 					Statement statement =sqlConnection.createStatement();
 					String nameCli = client.getName();
 					String nameRoom = id_sala;
-					String sentence= "INSERT INTO CONNECTION VALUES( , 'SELECT ID FROM Client WHERE name LIKE'"+nameCli+", SELECT ID FROM Room WHERE name LIKE "+ nameRoom+";"; 
+					String sentence= "INSERT INTO Connection VALUES"
+							+ "(null, (SELECT ID FROM Client WHERE name = '"+nameCli+"'), "
+									+ "(SELECT ID FROM Room WHERE name = '"+nameRoom+"'));";
+						System.out.println(sentence);	
 					statement.execute(sentence);
 				} catch (SQLException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
 				try {
+					output.println(id_sala);
+					output.flush();
+					output.println(id_sala+"FinoMaricon");
+
 					InterfaceMultiRoomChat.createNewChatTab(tabPlace, id_sala, client);
 					
 				} catch (ClassNotFoundException | SQLException e1) {

@@ -41,7 +41,7 @@ public class InterfaceRegister extends JFrame {
 	//private JTextField textField_Email;
 	private JTextField textField_EmaiL;
 	private boolean correctName=false, goodPassword=false, emailCorrect=false;
-	private final int port = 3501;
+	private final int port = 3503;
 	private final String ipAddress = "127.0.0.1";
 	//private FocusAdapter focusListener = new FocusAdapter() {
 		
@@ -186,14 +186,6 @@ public class InterfaceRegister extends JFrame {
 				SecurityDatabase.allGood(correctName, goodPassword, emailCorrect, btn_Login);
 			}
 		});
-		/*
-		if(!correctName || !goodPassword || !emailCorrect) {
-			btn_Login.setEnabled(false);
-		}
-		else {
-		btn_Login.setEnabled(true);
-		}
-		*/
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)

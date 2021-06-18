@@ -50,9 +50,10 @@ public class ReaderThread extends Thread {
 			try {
 				String protocol;
 				protocol = bufferInput.readLine();
-				System.out.println(protocol +"///// Protocol");
+				System.out.println(protocol +"///// Protocol From Client");
 				String message;
 				message = bufferInput.readLine();
+				System.out.println(message + "///// Message From Client");
 				index = conn.getClientSockets().indexOf(cli);
 				this.client = conn.getClientList().get(index);
 				
@@ -69,30 +70,47 @@ public class ReaderThread extends Thread {
 					//Leer la informacion inicial bufferInput.readLine();
 					if(!client.getRooms().contains(protocol)) {
 						client.addRoom(protocol);
+						System.out.println(client.getRooms());
 					}
-					for (int i = 0; i < clientBuffersOut.size(); i++) {
-						System.out.println(protocol +"///// Protocol to the client");
-						//Pilla el nombre del cliente
-						String name = conn.getClientList().get(index).getName();
-						//Escupe el mensaje a todos los clientes
-						clientBuffersOut.get(i).println(protocol);
-						clientBuffersOut.get(i).flush();
-						System.out.println(message +"///// Message to the client");
-						clientBuffersOut.get(i).println(name+":"+message);
-						clientBuffersOut.get(i).flush();
+					if(message.equals(protocol + "FinoMaricon")) {
+						for (int i = 0; i < clientBuffersOut.size(); i++) {
+							System.out.println(protocol +"///// Protocol to the client");
+							//Pilla el nombre del cliente
+							String name = conn.getClientList().get(index).getName();
+							//Escupe el mensaje a todos los clientes
+							clientBuffersOut.get(i).println(protocol);
+							clientBuffersOut.get(i).flush();
+							System.out.println(message +"///// Message to the client");
+							clientBuffersOut.get(i).println(message);
+							clientBuffersOut.get(i).flush();
+						}
+					}
+					else {
+						for (int i = 0; i < clientBuffersOut.size(); i++) {
+							System.out.println(protocol +"///// Protocol to the client");
+							//Pilla el nombre del cliente
+							String name = conn.getClientList().get(index).getName();
+							//Escupe el mensaje a todos los clientes
+							clientBuffersOut.get(i).println(protocol);
+							clientBuffersOut.get(i).flush();
+							System.out.println(message +"///// Message to the client");
+							clientBuffersOut.get(i).println(name+":"+message);
+							clientBuffersOut.get(i).flush();
+						}
 					}
 					
-					System.out.println("boi");
+					
+					//System.out.println("boi");
 				
 				}
 				//Clients connected
 					System.out.println(client.getName()+ " /////Connected");
-					for(String b: client.getRooms()) {
+					/*for(String b: client.getRooms()) {
 						System.out.println(b);
 						if(b.equals(protocol)) {
 							System.out.println(b);
 						}
-					}
+					}*/
 				//System.out.println(message + " /////Client message " + index);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

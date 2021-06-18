@@ -15,6 +15,7 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
@@ -44,14 +45,14 @@ public class InterfaceMultiRoomChat extends JFrame {
 	private static BufferedReader input;
 	private static PrintStream output;
 	
-	private static WriterThread writer;
-	private static ArrayList<WriterThread> writeArray = new ArrayList<WriterThread>();
+	private  WriterThread writer;
+	
 	
 	private static ArrayList<JPanel> roomsArrayList= new ArrayList <JPanel>();
 	//private static ClientLogic client = new ClientLogic();
 	
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-	private Connection sqlConnection;
+	private static Connection sqlConnection;
 	
 	private ActionListener listen;
 	/*public ClientLogic getClient() {
@@ -133,6 +134,20 @@ public class InterfaceMultiRoomChat extends JFrame {
 		btn_Morirse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				client.deleteRoom(nameOfTheTab);
+				Statement statement;
+				try {
+					statement = sqlConnection.createStatement();
+					String nameCli = client.getName();
+					String nameRoom = nameOfTheTab;
+					String sentence= "DELETE FROM Connection WHERE ID_CLIENT = (SELECT ID FROM Client WHERE name = '"+nameCli+"') "+
+							"AND ID_Room = (SELECT ID FROM Room WHERE name = '"+nameRoom+"');" ;
+						System.out.println(sentence);	
+					statement.execute(sentence);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				for(String name : client.getRooms()) {
 					System.out.println(name + "// delete time");
 				}
@@ -211,12 +226,8 @@ public class InterfaceMultiRoomChat extends JFrame {
 			public void windowClosed(WindowEvent e) {
 				try {
 					int closeNumber = client.getSocket().getPort() + client.getSocket().getLocalPort();
-					//output.println(client.getName() + " disconnected");
 					output.println(closeNumber + "AAA");
-					for (WriterThread writerProcess : writeArray) {
-						writerProcess.suicide();
-						writeArray.remove(writerProcess);
-					}
+					writer.suicide();
 					client.getSocket().close();
 					System.exit(0);
 				} catch (IOException e1) {
@@ -237,8 +248,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 		}
 		sqlConnection = SecurityDatabase.connectionDB();
 		ListenersRoomButton roomButtonListener = new ListenersRoomButton(client, tabbedPane, output, sqlConnection);
-		writer = new WriterThread(input, roomsArrayList,sqlConnection);
-		writer.start();
 		setTitle("Chateito Wapo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 811, 457);
@@ -346,7 +355,10 @@ public class InterfaceMultiRoomChat extends JFrame {
 					.addGap(90))
 		);
 		rooms.setLayout(gl_rooms);
-		createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa", client);
+		//createNewChatTab(tabbedPane, "aaaaaaaaaaaaaaa", client);
+		/////Threads//
+		writer = new WriterThread(input, roomsArrayList,sqlConnection);
+		writer.start();
 		System.out.println(client.getName());
 	}
 }
