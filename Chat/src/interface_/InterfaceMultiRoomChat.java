@@ -55,12 +55,6 @@ public class InterfaceMultiRoomChat extends JFrame {
 	private static Connection sqlConnection;
 	
 	private ActionListener listen;
-	/*public ClientLogic getClient() {
-		return this.client;
-	}*/
-	/*public void setClient(logic.ClientLogic client) {
-		this.client=client;
-	};*/
 	/**
 	 * Launch the application.
 	 */
@@ -225,11 +219,25 @@ public class InterfaceMultiRoomChat extends JFrame {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				try {
+					Statement statement;
+					try {
+						statement = sqlConnection.createStatement();
+						String nameCli = client.getName();
+						String sentence= "DELETE FROM Connection WHERE ID_CLIENT = (SELECT ID FROM Client WHERE name = '"+nameCli+"');" ;
+							System.out.println(sentence);	
+						statement.execute(sentence);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					int closeNumber = client.getSocket().getPort() + client.getSocket().getLocalPort();
 					output.println(closeNumber + "AAA");
 					writer.suicide();
 					client.getSocket().close();
 					System.exit(0);
+					
+					
+					
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

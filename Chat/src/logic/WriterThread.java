@@ -42,8 +42,8 @@ public class WriterThread extends Thread {
 				System.out.println("FFFFFFFFFF" + message);
 				for(JPanel jpanels : panels) {
 					System.out.println("Protocol client ///////"+ jpanels.getName());
-					if(protocol.equalsIgnoreCase(jpanels.getName())) {
-						System.out.println(jpanels.getName());
+					//if(protocol.equalsIgnoreCase(jpanels.getName())) {
+						System.out.println(jpanels.getName()+"/////Jpanel");
 						
 						for(int i=0; i< jpanels.getComponentCount();i++) {
 						Object component = jpanels.getComponent(i);
@@ -56,7 +56,7 @@ public class WriterThread extends Thread {
 									//Imprime el mensaje mas el cotenido que ya habia
 									show.setText(show.getText()+"\n"+ message);
 								}
-							 else if(show.getName().equalsIgnoreCase("ClientsConnected") && message.equalsIgnoreCase(protocol+"FinoMaricon")) {
+							 /*else if(show.getName().equalsIgnoreCase("ClientsConnected") && message.equalsIgnoreCase(protocol+"FinoMaricon")) {
 								 Statement statement;
 								try {
 									statement = sqlConnection.createStatement();
@@ -77,11 +77,11 @@ public class WriterThread extends Thread {
 									e.printStackTrace();
 								}
 									
-							}
+							}*/
 						}
 					}
 					
-					}		
+					//}		
 				}
 				} catch (IOException e) {
 				// TODO Auto-generated catch block
